@@ -1,5 +1,6 @@
 import "./App.css";
 import WeekView from "./ui/calendar/WeekView";
+import Login from "./ui/Login";
 import { getStartOfCurrentWeek } from "./util/date";
 
 function App() {
@@ -8,7 +9,8 @@ function App() {
 
     return (
         <>
-            <WeekView startDate={startOfWeek} today={today} />
+            {/* <WeekView startDate={startOfWeek} today={today} /> */}
+            <Login />
         </>
     );
 }
