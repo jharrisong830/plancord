@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
 import { Button, Container, TextField, Stack } from "@mui/material";
 
 import { signInUser } from "../util/user";
 
-export default function Login() {
+export default function LoginView() {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -15,8 +18,9 @@ export default function Login() {
             try {
                 await signInUser(email, password);
                 console.log("USER SIGNED IN");
+                navigate("/");
             } catch (e) {
-                console.log("Error in signing in user: ", e); 
+                console.log("Error in signing in user: ", e);
             }
         };
 
@@ -28,6 +32,8 @@ export default function Login() {
 
     return (
         <Container>
+            <h1>Plancord</h1>
+            <h3>Pcord Scheduling Calendar</h3>
             <Stack spacing={1}>
                 <TextField
                     label="Email"

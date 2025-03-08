@@ -1,7 +1,10 @@
 import firestore from "../firebase/firestore";
 import firebaseAuth from "../firebase/auth";
 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+} from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 
 export type User = {
@@ -12,11 +15,21 @@ export type User = {
     admin: boolean;
 };
 
-export const createUser = async (userName: string, email: string, displayName: string, admin: boolean, password: string): Promise<User> => {
+export const createUser = async (
+    userName: string,
+    email: string,
+    displayName: string,
+    admin: boolean,
+    password: string
+): Promise<User> => {
     const auth = firebaseAuth();
     const db = firestore();
     try {
-        const credential = await createUserWithEmailAndPassword(auth, email, password);
+        const credential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
         const user = credential.user;
 
         console.log("User created: ", user.uid);
@@ -38,10 +51,17 @@ export const createUser = async (userName: string, email: string, displayName: s
     }
 };
 
-export const signInUser = async (email: string, password: string): Promise<void> => {
+export const signInUser = async (
+    email: string,
+    password: string
+): Promise<void> => {
     const auth = firebaseAuth();
-    try { 
-        const credential = await signInWithEmailAndPassword(auth, email, password);
+    try {
+        const credential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
         const user = credential.user;
         console.log(user);
     } catch (e) {
