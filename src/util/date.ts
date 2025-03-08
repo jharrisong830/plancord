@@ -7,7 +7,15 @@
  */
 
 export const MS_IN_DAY = 1000 * 60 * 60 * 24;
-const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAYS_OF_WEEK = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+];
 
 /**
  * returns current time in unix epoch milliseconds
@@ -46,15 +54,15 @@ export const getDaysInMonth = (monthInd: number, year: number): number => {
 
 /**
  * returns a timestamp for start of the current week (the most recently passed sunday)
- * @param date 
+ * @param date
  */
 export const getStartOfCurrentWeek = (date: Date): Date => {
-    return new Date(date.getTime() - (date.getDay() * MS_IN_DAY));
+    return new Date(date.getTime() - date.getDay() * MS_IN_DAY);
 };
 
 /**
  * returns a string for the day of the week
- * @param date 
+ * @param date
  */
 export const getWeekday = (date: Date): string => DAYS_OF_WEEK[date.getDay()];
 
