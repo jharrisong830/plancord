@@ -1,6 +1,7 @@
-import { Box, Container, Grid2 as Grid } from "@mui/material";
+import { Box, Container, Grid2 as Grid, Stack } from "@mui/material";
 
-import { timestampToStringISO, getWeekday, MS_IN_DAY } from "../../util/date";
+import { timestampToStringISO, getWeekday, range, MS_IN_DAY } from "../../util/date";
+import DaySchedule from "./DaySchedule";
 
 export default function WeekView({
     startDate,
@@ -9,23 +10,32 @@ export default function WeekView({
     startDate: Date;
     today: Date;
 }) {
-    const days = [0, 1, 2, 3, 4, 5, 6].map(
+    const days = range(0, 7).map(
         (i) => new Date(startDate.getTime() + i * MS_IN_DAY)
     );
 
     return (
-        <Box>
+
             <Container maxWidth={false}>
                 <Grid container columns={14}>
                     {days.map((day, ind) => (
                         <Grid key={ind} size={2}>
-                            {timestampToStringISO(day.getTime())} (
-                            {getWeekday(day)})
-                            {today.getDay() === ind ? " TODAY" : ""}
+                            <Stack spacing={1}>
+                                <Box>
+                                    {timestampToStringISO(day.getTime())} (
+                                    {getWeekday(day)})
+                                    {today.getDay() === ind ? " TODAY" : ""}
+                                </Box>
+                                <Box>
+                                    <DaySchedule />
+                                </Box>
+                            </Stack>
+                            
+                            
                         </Grid>
                     ))}
                 </Grid>
             </Container>
-        </Box>
+
     );
 }

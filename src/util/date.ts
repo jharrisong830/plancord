@@ -17,6 +17,21 @@ const DAYS_OF_WEEK = [
     "Saturday"
 ];
 
+
+/**
+ * returns an array of successive numbers in range [start, end)
+ * @param start inclusive start of range
+ * @param end non-inclusive end of range
+ * @returns 
+ */
+export const range = (start: number, end: number): Array<number> => {
+    const arr: Array<number> = [];
+    for (let i = start; i < end; i++) {
+        arr.push(i);
+    }
+    return arr;
+}
+
 /**
  * returns current time in unix epoch milliseconds
  * @returns {number} milliseconds since 01 January 1970 00:00
