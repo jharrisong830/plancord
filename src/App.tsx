@@ -8,7 +8,7 @@ function App() {
 
     return (
         <>
-            <WeekView startDate={startOfWeek} />
+            <WeekView startDate={startOfWeek} today={today} />
         </>
     );
 }
