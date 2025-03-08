@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 
-import app from "../firebase/configuration";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { Button, Container, TextField, Stack } from "@mui/material";
 
-import { Box, Button, Container, TextField, Stack } from "@mui/material";
+import { signInUser } from "../util/user";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -12,9 +11,18 @@ export default function Login() {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
     useEffect(() => {
+        const asyncWrapper = async () => {
+            try {
+                await signInUser(email, password);
+                console.log("USER SIGNED IN");
+            } catch (e) {
+                console.log("Error in signing in user: ", e); 
+            }
+        };
+
         if (isLoggingIn) {
-            const auth = getAuth(app);
-            console.log("We connected!");
+            asyncWrapper();
+            setIsLoggingIn(false);
         }
     }, [isLoggingIn]);
 
