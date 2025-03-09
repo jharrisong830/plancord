@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router";
 
 import { Button, Container, TextField, Stack } from "@mui/material";
 
+import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
 import { signInUser } from "../util/user";
 
 export default function LoginView() {
+    const auth = useContext(FirebaseAuthContext);
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -15,12 +17,14 @@ export default function LoginView() {
 
     useEffect(() => {
         const asyncWrapper = async () => {
-            try {
-                await signInUser(email, password);
-                console.log("USER SIGNED IN");
-                navigate("/");
-            } catch (e) {
-                console.log("Error in signing in user: ", e);
+            if (auth) {
+                try {
+                    await signInUser(auth, email, password);
+                    console.log("USER SIGNED IN");
+                    navigate("/");
+                } catch (e) {
+                    console.log("Error in signing in user: ", e);
+                }
             }
         };
 

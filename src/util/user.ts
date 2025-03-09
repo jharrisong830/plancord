@@ -1,9 +1,9 @@
 import firestore from "../firebase/firestore";
-import firebaseAuth from "../firebase/auth";
 
 import {
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    type Auth
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 
@@ -16,13 +16,13 @@ export type User = {
 };
 
 export const createUser = async (
+    auth: Auth,
     userName: string,
     email: string,
     displayName: string,
     admin: boolean,
     password: string
 ): Promise<User> => {
-    const auth = firebaseAuth();
     const db = firestore();
     try {
         const credential = await createUserWithEmailAndPassword(
@@ -52,10 +52,10 @@ export const createUser = async (
 };
 
 export const signInUser = async (
+    auth: Auth,
     email: string,
     password: string
 ): Promise<void> => {
-    const auth = firebaseAuth();
     try {
         const credential = await signInWithEmailAndPassword(
             auth,
@@ -66,6 +66,15 @@ export const signInUser = async (
         console.log(user);
     } catch (e) {
         console.log("Error in signing in user: ", e);
+        throw e;
+    }
+};
+
+export const signOutUser = async (auth: Auth): Promise<void> => {
+    try {
+        await auth.signOut();
+    } catch (e) {
+        console.log("Error in signing out user: ", e);
         throw e;
     }
 };

@@ -1,6 +1,10 @@
 import app from "./configuration";
-import { getAuth } from "firebase/auth";
+import { getAuth, browserSessionPersistence, type Auth } from "firebase/auth";
 
-const firebaseAuth = () => getAuth(app);
+const setupAuth = async (): Promise<Auth> => {
+    const auth = getAuth(app);
+    await auth.setPersistence(browserSessionPersistence);
+    return auth;
+};
 
-export default firebaseAuth;
+export default setupAuth;

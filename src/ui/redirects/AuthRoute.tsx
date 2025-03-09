@@ -1,5 +1,6 @@
+import { useContext } from "react";
+import FirebaseAuthContext from "../../contexts/FirebaseAuthContext";
 import { Navigate } from "react-router";
-import firebaseAuth from "../../firebase/auth";
 
 /** renders child props only if there is an authenticated user currently logged in, otherwise we redirect to the login route */
 export default function AuthRoute({
@@ -7,9 +8,9 @@ export default function AuthRoute({
 }: {
     children: React.JSX.Element;
 }) {
-    const auth = firebaseAuth();
+    const auth = useContext(FirebaseAuthContext);
 
-    if (auth.currentUser === null) {
+    if (auth?.currentUser === null) {
         return <Navigate to="/login" />;
     } else {
         return children;
