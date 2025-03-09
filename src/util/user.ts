@@ -5,7 +5,7 @@ import {
     signInWithEmailAndPassword,
     type Auth
 } from "firebase/auth";
-import { setDoc, getDoc, doc } from "firebase/firestore";
+import { setDoc, getDoc, getDocs, doc, collection } from "firebase/firestore";
 
 export type User = {
     id: string;
@@ -91,6 +91,17 @@ export const signOutUser = async (auth: Auth): Promise<void> => {
         await auth.signOut();
     } catch (e) {
         console.log("Error in signing out user: ", e);
+        throw e;
+    }
+};
+
+export const getAllUsers = async (): Promise<Array<User>> => {
+    const db = firestore();
+    try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        return querySnapshot.docs.map((d) => d.data() as User);
+    } catch (e) {
+        console.log("Error in getting all users: ", e);
         throw e;
     }
 };

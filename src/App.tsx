@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import { CircularProgress } from "@mui/material";
 import HomeView from "./ui/HomeView";
 import { BrowserRouter, Route, Routes } from "react-router";
 import setupAuth from "./firebase/auth";
@@ -20,7 +21,7 @@ function App() {
 
     return (
         <FirebaseAuthContext.Provider value={{ authState, setAuthState }}>
-            {authState.auth && (
+            {authState.auth ? (
                 <BrowserRouter>
                     <Routes>
                         <Route
@@ -29,7 +30,7 @@ function App() {
                         />
                     </Routes>
                 </BrowserRouter>
-            )}
+            ) : <CircularProgress />}
         </FirebaseAuthContext.Provider>
     );
 }

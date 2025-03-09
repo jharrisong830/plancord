@@ -3,8 +3,10 @@ import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
 import { signOutUser } from "../util/user";
 import { getStartOfCurrentWeek } from "../util/date";
 import WeekView from "./calendar/WeekView";
-import { Button } from "@mui/material";
-import { getUser, type User } from "../util/user";
+import AdminHomeView from "./admin/AdminHomeView";
+import { Button, CircularProgress } from "@mui/material";
+import { type User } from "../util/user";
+import useCurrentUser from "../hooks/useCurrentUser";
 
 export default function HomeView() {
     const today = new Date();
@@ -14,8 +16,9 @@ export default function HomeView() {
     const { auth } = authState;
 
     const [isSigningOut, setIsSigningOut] = useState(false);
+    const [view, setView] = useState<"home" | "admin" | "week">("home");
 
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const currentUser: User | null = useCurrentUser();
 
     // effect for signout
     useEffect(() => {
@@ -35,39 +38,29 @@ export default function HomeView() {
         }
     }, [isSigningOut, auth]);
 
-    // effect for getting current user's details
-    useEffect(() => {
-        const asyncWrapper = async () => {
-            if (auth && auth.currentUser) {
-                try {
-                    const user = await getUser(auth.currentUser.uid);
-                    setCurrentUser(user);
-                } catch (e) {
-                    console.log("Error in getting user: ", e);
-                }
+    switch (view) {
+        case "home":
+            if (currentUser) {
+                return (
+                    <>
+                            <>
+                                <h1>Home</h1>
+                                <Button onClick={() => setIsSigningOut(true)}>Sign Out</Button>
+                                {currentUser.admin && (
+                                    <>
+                                        <h5>Admin</h5>
+                                        <Button onClick={() => setView("admin")}>Admin Panel</Button>
+                                    </>
+                                )}
+                                <WeekView today={today} startDate={startDate} />
+                            </>
+                    </>
+                );
             }
-        };
-
-        asyncWrapper();
-    }, [auth]);
-
-
-    
-    return (
-        <>
-            {currentUser && (
-                <>
-                    <h1>Home</h1>
-                    <Button onClick={() => setIsSigningOut(true)}>Sign Out</Button>
-                    {currentUser.admin && (
-                        <>
-                            <h5>Admin</h5>
-                            <Button>Admin Panel</Button>
-                        </>
-                    )}
-                    <WeekView today={today} startDate={startDate} />
-                </>
-            )}
-        </>
-    )
+            return <CircularProgress />;
+        case "admin":
+            return <AdminHomeView goBack={() => setView("home")}/>;
+        case "week":
+            return <h1>Week</h1>;
+    }
 }
