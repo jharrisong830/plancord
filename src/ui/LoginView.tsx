@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router";
 
 import { Button, Container, TextField, Stack } from "@mui/material";
 
@@ -7,8 +6,8 @@ import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
 import { signInUser } from "../util/user";
 
 export default function LoginView() {
-    const auth = useContext(FirebaseAuthContext);
-    const navigate = useNavigate();
+    const { authState } = useContext(FirebaseAuthContext)!;
+    const { auth } = authState;
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -21,7 +20,6 @@ export default function LoginView() {
                 try {
                     await signInUser(auth, email, password);
                     console.log("USER SIGNED IN");
-                    navigate("/");
                 } catch (e) {
                     console.log("Error in signing in user: ", e);
                 }

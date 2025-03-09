@@ -1,18 +1,18 @@
 import { useContext } from "react";
 import FirebaseAuthContext from "../../contexts/FirebaseAuthContext";
-import { Navigate } from "react-router";
+import LoginView from "../LoginView";
 
-/** renders child props only if there is an authenticated user currently logged in, otherwise we redirect to the login route */
+/** renders child props only if there is an authenticated user currently logged in, otherwise we show the login screen */
 export default function AuthRoute({
     children
 }: {
     children: React.JSX.Element;
 }) {
-    const auth = useContext(FirebaseAuthContext);
+    const { authState } = useContext(FirebaseAuthContext)!;
+    const { isAuth } = authState;
 
-    if (auth?.currentUser === null) {
-        return <Navigate to="/login" />;
-    } else {
-        return children;
+    if (isAuth) {
+        return children;   
     }
+    return <LoginView />;
 }
