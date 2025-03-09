@@ -4,7 +4,6 @@ import { getUser, type User } from "../util/user";
 
 /**
  * fetches the details of the currently authenticated user 
- * @param auth 
  * @returns 
  */
 const useCurrentUser = (): User | null => {
