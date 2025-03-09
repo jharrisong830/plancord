@@ -105,3 +105,14 @@ export const getAllUsers = async (): Promise<Array<User>> => {
         throw e;
     }
 };
+
+export const updateUser = async (user: User): Promise<void> => {
+    const db = firestore();
+    try {
+        await setDoc(doc(db, "users", user.id), user);
+        console.log("Document updated with ID: ", user.id);
+    } catch (e) {
+        console.log("Error in updating user: ", e);
+        throw e;
+    }
+};
