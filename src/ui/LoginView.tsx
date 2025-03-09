@@ -30,7 +30,7 @@ export default function LoginView() {
             asyncWrapper();
             setIsLoggingIn(false);
         }
-    }, [isLoggingIn]);
+    }, [isLoggingIn, auth]);
 
     return (
         <Container>

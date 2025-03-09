@@ -5,7 +5,7 @@ import {
     signInWithEmailAndPassword,
     type Auth
 } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, getDoc, doc } from "firebase/firestore";
 
 export type User = {
     id: string;
@@ -47,6 +47,22 @@ export const createUser = async (
         return newUser;
     } catch (e) {
         console.log("Error in creating new user: ", e);
+        throw e;
+    }
+};
+
+export const getUser = async (id: string): Promise<User> => {
+    const db = firestore();
+    try {
+        const docRef = doc(db, "users", id); // get the user with the provided id
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const user = docSnap.data() as User;
+            return user;
+        }
+        throw new Error(`No such user with ID ${id}`);
+    } catch (e) {
+        console.log("Error in getting user: ", e);
         throw e;
     }
 };
