@@ -3,9 +3,11 @@ import firestore from "../firebase/firestore";
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    signOut,
     type Auth
 } from "firebase/auth";
 import { setDoc, getDoc, getDocs, doc, collection } from "firebase/firestore";
+import { setupAuthForCreatingUser } from "../firebase/auth";
 
 export type User = {
     id: string;
@@ -16,14 +18,20 @@ export type User = {
 };
 
 export const createUser = async (
-    auth: Auth,
     userName: string,
     email: string,
     displayName: string,
     admin: boolean,
     password: string
 ): Promise<User> => {
+    const auth = await setupAuthForCreatingUser();
     const db = firestore();
+
+    userName = userName.trim();
+    email = email.trim();
+    displayName = displayName.trim();
+    password = password.trim();
+
     try {
         const credential = await createUserWithEmailAndPassword(
             auth,
@@ -33,6 +41,7 @@ export const createUser = async (
         const user = credential.user;
 
         console.log("User created: ", user.uid);
+        await signOutUser(auth); // sign this user out of this auth instance
 
         const newUser: User = {
             id: user.uid,
@@ -72,6 +81,9 @@ export const signInUser = async (
     email: string,
     password: string
 ): Promise<void> => {
+    email = email.trim();
+    password = password.trim();
+
     try {
         const credential = await signInWithEmailAndPassword(
             auth,
@@ -88,7 +100,7 @@ export const signInUser = async (
 
 export const signOutUser = async (auth: Auth): Promise<void> => {
     try {
-        await auth.signOut();
+        await signOut(auth);
     } catch (e) {
         console.log("Error in signing out user: ", e);
         throw e;
@@ -108,6 +120,11 @@ export const getAllUsers = async (): Promise<Array<User>> => {
 
 export const updateUser = async (user: User): Promise<void> => {
     const db = firestore();
+
+    user.userName = user.userName.trim();
+    user.email = user.email.trim();
+    user.displayName = user.displayName.trim();
+
     try {
         await setDoc(doc(db, "users", user.id), user);
         console.log("Document updated with ID: ", user.id);

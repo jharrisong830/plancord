@@ -3,9 +3,9 @@ import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
 import { getUser, type User } from "../util/user";
 
 /**
- * fetches the details of the currently authenticated user 
+ * fetches the details of the currently authenticated user
  * TODO: option to refresh
- * @returns 
+ * @returns
  */
 const useCurrentUser = (): User | null => {
     const { authState } = useContext(FirebaseAuthContext)!;

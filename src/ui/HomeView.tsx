@@ -43,23 +43,31 @@ export default function HomeView() {
             if (currentUser) {
                 return (
                     <>
-                            <>
-                                <h1>Home</h1>
-                                <Button onClick={() => setIsSigningOut(true)}>Sign Out</Button>
-                                {currentUser.admin && (
-                                    <>
-                                        <h5>Admin</h5>
-                                        <Button onClick={() => setView("admin")}>Admin Panel</Button>
-                                    </>
-                                )}
-                                <WeekView today={today} startDate={startDate} />
-                            </>
+                        <>
+                            <h1>Home</h1>
+                            <Button onClick={() => setIsSigningOut(true)}>
+                                Sign Out
+                            </Button>
+                            <h4>
+                                {currentUser.displayName} (@
+                                {currentUser.userName})
+                            </h4>
+                            {currentUser.admin && (
+                                <>
+                                    <h5>Admin</h5>
+                                    <Button onClick={() => setView("admin")}>
+                                        Admin Panel
+                                    </Button>
+                                </>
+                            )}
+                            <WeekView today={today} startDate={startDate} />
+                        </>
                     </>
                 );
             }
             return <CircularProgress />;
         case "admin":
-            return <AdminHomeView goBack={() => setView("home")}/>;
+            return <AdminHomeView goBack={() => setView("home")} />;
         case "week":
             return <h1>Week</h1>;
     }

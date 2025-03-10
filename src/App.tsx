@@ -6,10 +6,14 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import setupAuth from "./firebase/auth";
 
 import AuthRoute from "./ui/redirects/AuthRoute";
-import FirebaseAuthContext, { emptyFirebaseAuthContextValues } from "./contexts/FirebaseAuthContext";
+import FirebaseAuthContext, {
+    emptyFirebaseAuthContextValues
+} from "./contexts/FirebaseAuthContext";
 
 function App() {
-    const [authState, setAuthState] = useState(emptyFirebaseAuthContextValues());
+    const [authState, setAuthState] = useState(
+        emptyFirebaseAuthContextValues()
+    );
 
     useEffect(() => {
         const asyncWrapper = async () => {
@@ -26,11 +30,17 @@ function App() {
                     <Routes>
                         <Route
                             index
-                            element={<AuthRoute><HomeView /></AuthRoute>}
+                            element={
+                                <AuthRoute>
+                                    <HomeView />
+                                </AuthRoute>
+                            }
                         />
                     </Routes>
                 </BrowserRouter>
-            ) : <CircularProgress />}
+            ) : (
+                <CircularProgress />
+            )}
         </FirebaseAuthContext.Provider>
     );
 }

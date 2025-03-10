@@ -12,7 +12,7 @@ export default function AuthRoute({
     const { isAuth } = authState;
 
     if (isAuth) {
-        return children;   
+        return children;
     }
     return <LoginView />;
 }

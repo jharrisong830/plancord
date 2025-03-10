@@ -6,18 +6,24 @@ export type FirebaseAuthContextValues = {
     isAuth: boolean; // true => signed in, false => not
 };
 
-export type SetAuthStateFunctionHeader = (setter: FirebaseAuthContextValues | ((prev: FirebaseAuthContextValues) => FirebaseAuthContextValues)) => void;
+export type SetAuthStateFunctionHeader = (
+    setter:
+        | FirebaseAuthContextValues
+        | ((prev: FirebaseAuthContextValues) => FirebaseAuthContextValues)
+) => void;
 
 export type FirebaseAuthContextProviderProps = {
     authState: FirebaseAuthContextValues;
-    setAuthState:  SetAuthStateFunctionHeader;
+    setAuthState: SetAuthStateFunctionHeader;
 };
 
-export const emptyFirebaseAuthContextValues = (): FirebaseAuthContextValues => ({
-    auth: null,
-    isAuth: false
-});
+export const emptyFirebaseAuthContextValues =
+    (): FirebaseAuthContextValues => ({
+        auth: null,
+        isAuth: false
+    });
 
-const FirebaseAuthContext = createContext<FirebaseAuthContextProviderProps | null>(null);
+const FirebaseAuthContext =
+    createContext<FirebaseAuthContextProviderProps | null>(null);
 
 export default FirebaseAuthContext;

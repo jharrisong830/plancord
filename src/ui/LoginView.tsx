@@ -28,9 +28,8 @@ export default function LoginView() {
 
         if (isLoggingIn) {
             asyncWrapper();
-            setIsLoggingIn(false);
         }
-    }, [isLoggingIn, auth]);
+    }, [isLoggingIn, auth, email, password]);
 
     return (
         <Container>
