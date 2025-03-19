@@ -40,8 +40,7 @@ export default function CreateUserDialog({
                     userName,
                     email,
                     displayName,
-                    admin,
-                    password
+                    admin
                 );
                 console.log("USER CREATED: ", newUser);
             } catch (e) {
