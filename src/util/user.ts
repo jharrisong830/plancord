@@ -202,7 +202,6 @@ export const getUserByUid = async (uid: string): Promise<User> => {
     try {
         const q = query(collection(db, "users"), where("uid", "==", uid));
         const querySnapshot = await getDocs(q);
-        console.log(querySnapshot.docs.length);
         if (querySnapshot.docs.length === 1) {
             return querySnapshot.docs[0].data() as User;
         }

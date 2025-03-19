@@ -20,7 +20,6 @@ export default function UserTable() {
         { field: "userName", headerName: "Username", flex: 2 },
         { field: "email", headerName: "Email", flex: 2 },
         { field: "displayName", headerName: "Display Name", flex: 1 },
-        { field: "regId", headerName: "Registration ID", flex: 1 },
         { field: "admin", headerName: "Admin", type: "boolean" },
         {
             field: "regId",

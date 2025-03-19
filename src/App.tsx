@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import { CircularProgress } from "@mui/material";
 import HomeView from "./ui/HomeView";
+import RegisterView from "./ui/RegisterView";
 import { BrowserRouter, Route, Routes } from "react-router";
 import setupAuth from "./firebase/auth";
 
@@ -36,6 +37,7 @@ function App() {
                                 </AuthRoute>
                             }
                         />
+                        <Route path="/register" element={<RegisterView />} />
                     </Routes>
                 </BrowserRouter>
             ) : (
