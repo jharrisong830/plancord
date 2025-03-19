@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
-import { getUser, type User } from "../util/user";
+import { getUserByUid, type User } from "../util/user";
 
 /**
  * fetches the details of the currently authenticated user
@@ -16,7 +16,7 @@ const useCurrentUser = (): User | null => {
         const asyncWrapper = async () => {
             if (auth && auth.currentUser) {
                 try {
-                    const user = await getUser(auth.currentUser.uid);
+                    const user = await getUserByUid(auth.currentUser.uid);
                     setCurrentUser(user);
                 } catch (e) {
                     console.log("Error in getting user: ", e);
