@@ -35,7 +35,7 @@ export default function RegisterView() {
         if (isLoggingIn) {
             asyncWrapper();
         }
-    }, [isLoggingIn, auth, email, password, regId]);
+    }, [isLoggingIn, auth, email, password, regId, navigate]);
 
     return (
         <Container>

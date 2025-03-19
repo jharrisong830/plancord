@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     Dialog,
     DialogTitle,
@@ -22,7 +22,10 @@ export default function CreateUserDialog({
     isDialogOpen: boolean;
     setIsDialogOpen: (isOpen: boolean) => void;
 }) {
-    const handleCloseDialog = () => setIsDialogOpen(false);
+    const handleCloseDialog = useCallback(
+        () => setIsDialogOpen(false),
+        [setIsDialogOpen]
+    );
 
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
@@ -52,7 +55,15 @@ export default function CreateUserDialog({
         if (isUpdating) {
             asyncWrapper();
         }
-    }, [isUpdating, userName, email, displayName, admin, password]);
+    }, [
+        isUpdating,
+        userName,
+        email,
+        displayName,
+        admin,
+        password,
+        handleCloseDialog
+    ]);
 
     return (
         <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
