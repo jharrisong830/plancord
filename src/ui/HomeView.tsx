@@ -2,13 +2,16 @@ import { useState, useEffect, useContext } from "react";
 import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
 import { signOutUser } from "../util/user";
 import { getStartOfCurrentWeek } from "../util/date";
-import WeekView from "./calendar/WeekView";
 import AdminHomeView from "./admin/AdminHomeView";
 import { Button, CircularProgress } from "@mui/material";
 import { type User } from "../util/user";
 import useCurrentUser from "../hooks/useCurrentUser";
 
+import { Calendar, dayjsLocalizer } from "react-big-calendar";
+import dayjs from "dayjs";
+
 export default function HomeView() {
+    const localizer = dayjsLocalizer(dayjs);
     const today = new Date();
     const startDate = getStartOfCurrentWeek(today);
 
@@ -59,14 +62,17 @@ export default function HomeView() {
                                 </Button>
                             </>
                         )}
-                        <WeekView today={today} startDate={startDate} />
+                        <Calendar
+                            localizer={localizer}
+                            events={[]}
+                            defaultDate={startDate}
+                            style={{ height: 500 }}
+                        />
                     </>
                 );
             }
             return <CircularProgress />;
         case "admin":
             return <AdminHomeView goBack={() => setView("home")} />;
-        case "week":
-            return <h1>Week</h1>;
     }
 }

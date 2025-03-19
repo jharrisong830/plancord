@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CircularProgress } from "@mui/material";
 import HomeView from "./ui/HomeView";
 import RegisterView from "./ui/RegisterView";

@@ -14,8 +14,10 @@
         "@emotion/styled": "^11.14.0",
         "@mui/material": "^6.4.7",
         "@mui/x-data-grid": "^7.27.3",
+        "dayjs": "^1.11.13",
         "firebase": "^11.4.0",
         "react": "^19.0.0",
+        "react-big-calendar": "^1.18.0",
         "react-dom": "^19.0.0",
         "react-router": "^7.3.0",
         "uuid": "^11.1.0"
@@ -23,6 +25,7 @@
     "devDependencies": {
         "@eslint/js": "^9.21.0",
         "@types/react": "^19.0.10",
+        "@types/react-big-calendar": "^1.16.1",
         "@types/react-dom": "^19.0.4",
         "@vitejs/plugin-react-swc": "^3.8.0",
         "eslint": "^9.21.0",
