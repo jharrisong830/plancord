@@ -7,7 +7,15 @@ import {
     signOut,
     type Auth
 } from "firebase/auth";
-import { setDoc, getDoc, getDocs, doc, collection, query, where } from "firebase/firestore";
+import {
+    setDoc,
+    getDoc,
+    getDocs,
+    doc,
+    collection,
+    query,
+    where
+} from "firebase/firestore";
 
 export type User = {
     uid?: string;
@@ -20,9 +28,9 @@ export type User = {
 
 /**
  * registers a user with firebase auth, checks that their email and regId match what is in firestore before the account can be registered
- * @param email 
- * @param password 
- * @param regId 
+ * @param email
+ * @param password
+ * @param regId
  */
 export const registerUser = async (
     auth: Auth,
@@ -39,20 +47,36 @@ export const registerUser = async (
         if (docSnap.exists()) {
             const user = docSnap.data() as User;
 
-            if (user.uid) throw new Error(`User with ID ${regId} is already registered with firebase auth`);
-            if (user.regId !== regId) throw new Error(`Registration ID does not match for user with ID ${regId}`);
-            if (user.email !== email) throw new Error(`Email does not match for user with ID ${regId}`);
+            if (user.uid)
+                throw new Error(
+                    `User with ID ${regId} is already registered with firebase auth`
+                );
+            if (user.regId !== regId)
+                throw new Error(
+                    `Registration ID does not match for user with ID ${regId}`
+                );
+            if (user.email !== email)
+                throw new Error(
+                    `Email does not match for user with ID ${regId}`
+                );
 
             const credential = await createUserWithEmailAndPassword(
                 auth,
                 email,
                 password
             );
-            console.log("User registered with firebase auth (firebase user id): ", credential.user.uid);
+            console.log(
+                "User registered with firebase auth (firebase user id): ",
+                credential.user.uid
+            );
 
-            await setDoc(doc(db, "users", user.regId), { ...user, uid: credential.user.uid, registered: true });
+            await setDoc(doc(db, "users", user.regId), {
+                ...user,
+                uid: credential.user.uid,
+                registered: true
+            });
             console.log("Document written with ID: ", user.regId);
-            
+
             return user;
         } else throw new Error(`No such user with ID ${regId}`);
     } catch (e) {
@@ -63,17 +87,17 @@ export const registerUser = async (
 
 /**
  * adds a user document to firestore, the user will have to use their id to register their account when they log in the first time
- * @param userName 
- * @param email 
- * @param displayName 
- * @param admin 
- * @returns 
+ * @param userName
+ * @param email
+ * @param displayName
+ * @param admin
+ * @returns
  */
 export const createUser = async (
     userName: string,
     email: string,
     displayName: string,
-    admin: boolean,
+    admin: boolean
 ): Promise<User> => {
     const db = firestore();
 
@@ -83,7 +107,7 @@ export const createUser = async (
 
     try {
         const newUser: User = {
-            regId: uuid(), 
+            regId: uuid(),
             userName,
             email,
             displayName,
