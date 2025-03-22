@@ -101,16 +101,12 @@ export const createUser = async (
 ): Promise<User> => {
     const db = firestore();
 
-    userName = userName.trim();
-    email = email.trim();
-    displayName = displayName.trim();
-
     try {
         const newUser: User = {
             regId: uuid(),
-            userName,
-            email,
-            displayName,
+            userName: userName.trim(),
+            email: email.trim(),
+            displayName: displayName.trim(),
             admin
         };
 
@@ -129,8 +125,7 @@ export const getUser = async (regId: string): Promise<User> => {
         const docRef = doc(db, "users", regId); // get the user with the provided id
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-            const user = docSnap.data() as User;
-            return user;
+            return docSnap.data() as User;
         }
         throw new Error(`No such user with ID ${regId}`);
     } catch (e) {
@@ -144,14 +139,11 @@ export const signInUser = async (
     email: string,
     password: string
 ): Promise<void> => {
-    email = email.trim();
-    password = password.trim();
-
     try {
         const credential = await signInWithEmailAndPassword(
             auth,
-            email,
-            password
+            email.trim(),
+            password.trim()
         );
         const user = credential.user;
         console.log(user);

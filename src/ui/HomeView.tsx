@@ -5,8 +5,14 @@ import AdminHomeView from "./admin/AdminHomeView";
 import { Button, CircularProgress } from "@mui/material";
 import { type User } from "../util/user";
 import useCurrentUser from "../hooks/useCurrentUser";
+import CreateEventDialog from "./dialogs/CreateEventDialog";
 
-import { Calendar, dayjsLocalizer, type View } from "react-big-calendar";
+import {
+    Calendar,
+    dayjsLocalizer,
+    type View,
+    type SlotInfo
+} from "react-big-calendar";
 import dayjs from "dayjs";
 
 export default function HomeView() {
@@ -21,19 +27,38 @@ export default function HomeView() {
 
     const currentUser: User | null = useCurrentUser();
 
+    // create event dialog
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const handleOpenDialog = () => setIsDialogOpen(true);
 
     // calendar event handlers
 
     const [calView, setCalView] = useState<View>("month");
-    const onCalView = useCallback((newView: View) => setCalView(newView), [setCalView]);
+    const onCalView = useCallback(
+        (newView: View) => setCalView(newView),
+        [setCalView]
+    );
 
     const [currDate, setCurrDate] = useState<Date>(today);
-    const onNavigate = useCallback((newDate: Date) => setCurrDate(newDate), [setCurrDate]);
+    const onNavigate = useCallback(
+        (newDate: Date) => setCurrDate(newDate),
+        [setCurrDate]
+    );
 
-    const onShowMore = useCallback((_events: any[], date: Date) => {
-        setCurrDate(date);
-        setCalView("day");
-    }, [setCurrDate, setCalView]);
+    const onShowMore = useCallback(
+        (_events: any[], date: Date) => {
+            setCurrDate(date);
+            setCalView("day");
+        },
+        [setCurrDate, setCalView]
+    );
+
+    const onSelectSlot = useCallback(
+        (_slotInfo: SlotInfo) => {
+            handleOpenDialog();
+        },
+        [handleOpenDialog]
+    );
 
     // effect for signout
     useEffect(() => {
@@ -84,7 +109,12 @@ export default function HomeView() {
                             date={currDate}
                             onNavigate={onNavigate}
                             onShowMore={onShowMore}
+                            onSelectSlot={onSelectSlot}
                             style={{ height: 500 }}
+                        />
+                        <CreateEventDialog
+                            isDialogOpen={isDialogOpen}
+                            setIsDialogOpen={setIsDialogOpen}
                         />
                     </>
                 );

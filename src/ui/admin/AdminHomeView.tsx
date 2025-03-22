@@ -8,7 +8,6 @@ export default function AdminHomeView({ goBack }: { goBack: () => void }) {
     const currentUser = useCurrentUser();
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-
     const handleOpenDialog = () => setIsDialogOpen(true);
 
     if (currentUser) {
