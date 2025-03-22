@@ -1,19 +1,17 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback, useMemo } from "react";
 import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
 import { signOutUser } from "../util/user";
-import { getStartOfCurrentWeek } from "../util/date";
 import AdminHomeView from "./admin/AdminHomeView";
 import { Button, CircularProgress } from "@mui/material";
 import { type User } from "../util/user";
 import useCurrentUser from "../hooks/useCurrentUser";
 
-import { Calendar, dayjsLocalizer } from "react-big-calendar";
+import { Calendar, dayjsLocalizer, type View } from "react-big-calendar";
 import dayjs from "dayjs";
 
 export default function HomeView() {
     const localizer = dayjsLocalizer(dayjs);
-    const today = new Date();
-    const startDate = getStartOfCurrentWeek(today);
+    const today = useMemo(() => new Date(), []);
 
     const { authState } = useContext(FirebaseAuthContext)!;
     const { auth } = authState;
@@ -22,6 +20,20 @@ export default function HomeView() {
     const [view, setView] = useState<"home" | "admin" | "week">("home");
 
     const currentUser: User | null = useCurrentUser();
+
+
+    // calendar event handlers
+
+    const [calView, setCalView] = useState<View>("month");
+    const onCalView = useCallback((newView: View) => setCalView(newView), [setCalView]);
+
+    const [currDate, setCurrDate] = useState<Date>(today);
+    const onNavigate = useCallback((newDate: Date) => setCurrDate(newDate), [setCurrDate]);
+
+    const onShowMore = useCallback((_events: any[], date: Date) => {
+        setCurrDate(date);
+        setCalView("day");
+    }, [setCurrDate, setCalView]);
 
     // effect for signout
     useEffect(() => {
@@ -65,7 +77,13 @@ export default function HomeView() {
                         <Calendar
                             localizer={localizer}
                             events={[]}
-                            defaultDate={startDate}
+                            selectable={true}
+                            view={calView}
+                            onView={onCalView}
+                            defaultDate={today}
+                            date={currDate}
+                            onNavigate={onNavigate}
+                            onShowMore={onShowMore}
                             style={{ height: 500 }}
                         />
                     </>
