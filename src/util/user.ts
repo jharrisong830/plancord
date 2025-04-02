@@ -24,6 +24,7 @@ export type User = {
     email: string;
     displayName: string;
     admin: boolean;
+    registered: boolean;
 };
 
 /**
@@ -107,7 +108,8 @@ export const createUser = async (
             userName: userName.trim(),
             email: email.trim(),
             displayName: displayName.trim(),
-            admin
+            admin,
+            registered: false
         };
 
         await setDoc(doc(db, "users", newUser.regId), newUser);
