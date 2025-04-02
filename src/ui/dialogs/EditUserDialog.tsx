@@ -20,19 +20,23 @@ export default function EditUserDialog({
     user,
     setUser,
     isDialogOpen,
-    setIsDialogOpen
+    setIsDialogOpen,
+    refreshUsers
 }: {
     user: User | null;
     setUser: (user: User | null) => void;
     isDialogOpen: boolean;
     setIsDialogOpen: (isOpen: boolean) => void;
+    refreshUsers: () => void;
 }) {
+    const [isUpdating, setIsUpdating] = useState(false);
+
     const handleCloseDialog = useCallback(() => {
+        setIsUpdating(false);
         setIsDialogOpen(false);
         setUser(null);
+        refreshUsers();
     }, [setIsDialogOpen, setUser]);
-
-    const [isUpdating, setIsUpdating] = useState(false);
 
     // effect for updating a user (triggered after click of save button)
     useEffect(() => {

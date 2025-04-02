@@ -17,23 +17,31 @@ import { createUser } from "../../util/user";
  */
 export default function CreateUserDialog({
     isDialogOpen,
-    setIsDialogOpen
+    setIsDialogOpen,
+    refreshUsers
 }: {
     isDialogOpen: boolean;
     setIsDialogOpen: (isOpen: boolean) => void;
+    refreshUsers: () => void;
 }) {
-    const handleCloseDialog = useCallback(
-        () => setIsDialogOpen(false),
-        [setIsDialogOpen]
-    );
-
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [admin, setAdmin] = useState(false);
-    const [password, setPassword] = useState("");
 
     const [isUpdating, setIsUpdating] = useState(false);
+
+    const handleCloseDialog = useCallback(() => {
+        // clear old values
+        setIsUpdating(false);
+        setUserName("");
+        setEmail("");
+        setDisplayName("");
+        setAdmin(false);
+
+        setIsDialogOpen(false);
+        refreshUsers();
+    }, [setIsDialogOpen]);
 
     // effect for creating a user (triggered after click of save button)
     useEffect(() => {
@@ -55,15 +63,7 @@ export default function CreateUserDialog({
         if (isUpdating) {
             asyncWrapper();
         }
-    }, [
-        isUpdating,
-        userName,
-        email,
-        displayName,
-        admin,
-        password,
-        handleCloseDialog
-    ]);
+    }, [isUpdating, userName, email, displayName, admin, handleCloseDialog]);
 
     return (
         <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
@@ -74,11 +74,6 @@ export default function CreateUserDialog({
                         <TextField
                             label="Email"
                             onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <TextField
-                            type="password"
-                            label="Password"
-                            onChange={(e) => setPassword(e.target.value)}
                         />
                         <TextField
                             label="Username"
@@ -115,8 +110,7 @@ export default function CreateUserDialog({
                         isUpdating ||
                         userName.trim() === "" ||
                         email.trim() === "" ||
-                        displayName.trim() === "" ||
-                        password.trim() === ""
+                        displayName.trim() === ""
                     }
                 >
                     Save

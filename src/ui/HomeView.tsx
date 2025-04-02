@@ -3,7 +3,6 @@ import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
 import { signOutUser } from "../util/user";
 import AdminHomeView from "./admin/AdminHomeView";
 import { Button, CircularProgress } from "@mui/material";
-import { type User } from "../util/user";
 import useCurrentUser from "../hooks/useCurrentUser";
 import CreateEventDialog from "./dialogs/CreateEventDialog";
 
@@ -11,7 +10,7 @@ import {
     Calendar,
     dayjsLocalizer,
     type View,
-    type SlotInfo
+    type Event
 } from "react-big-calendar";
 import dayjs from "dayjs";
 
@@ -25,11 +24,14 @@ export default function HomeView() {
     const [isSigningOut, setIsSigningOut] = useState(false);
     const [view, setView] = useState<"home" | "admin" | "week">("home");
 
-    const currentUser: User | null = useCurrentUser();
+    const { currentUser } = useCurrentUser();
 
     // create event dialog
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const handleOpenDialog = () => setIsDialogOpen(true);
+    const handleOpenDialog = useCallback(
+        () => setIsDialogOpen(true),
+        [setIsDialogOpen]
+    );
 
     // calendar event handlers
 
@@ -46,19 +48,16 @@ export default function HomeView() {
     );
 
     const onShowMore = useCallback(
-        (_events: any[], date: Date) => {
+        (_events: Array<Event>, date: Date) => {
             setCurrDate(date);
             setCalView("day");
         },
         [setCurrDate, setCalView]
     );
 
-    const onSelectSlot = useCallback(
-        (_slotInfo: SlotInfo) => {
-            handleOpenDialog();
-        },
-        [handleOpenDialog]
-    );
+    const onSelectSlot = useCallback(() => {
+        handleOpenDialog();
+    }, [handleOpenDialog]);
 
     // effect for signout
     useEffect(() => {

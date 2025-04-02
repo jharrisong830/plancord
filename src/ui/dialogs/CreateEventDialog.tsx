@@ -9,11 +9,13 @@ import {
     Checkbox,
     FormGroup,
     FormControlLabel,
-    Stack
+    Stack,
+    Select,
+    MenuItem
 } from "@mui/material";
 import { createEvent } from "../../util/event";
-import { type User } from "../../util/user";
 import useCurrentUser from "../../hooks/useCurrentUser";
+import useAllUsers from "../../hooks/useAllUsers";
 
 export default function CreateEventDialog({
     isDialogOpen,
@@ -22,12 +24,19 @@ export default function CreateEventDialog({
     isDialogOpen: boolean;
     setIsDialogOpen: (isOpen: boolean) => void;
 }) {
-    const currentUser: User | null = useCurrentUser();
+    const { currentUser } = useCurrentUser();
+    const { allUsers } = useAllUsers();
 
     const handleCloseDialog = useCallback(
         () => setIsDialogOpen(false),
         [setIsDialogOpen]
     );
+
+    /** ensures that items already selected have bold text */
+    const getSelectedStyle = (regId: string): { fontWeight?: string } => {
+        if (invitees.includes(regId)) return { fontWeight: "bold" };
+        return {};
+    };
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -122,6 +131,39 @@ export default function CreateEventDialog({
                                         setAllDay(e.target.checked)
                                     }
                                 />
+                            }
+                        />
+                        <FormControlLabel
+                            label="Invitees"
+                            control={
+                                <Select
+                                    multiple
+                                    value={invitees}
+                                    onChange={(e) =>
+                                        setInvitees(
+                                            e.target.value as Array<string>
+                                        )
+                                    }
+                                >
+                                    {allUsers && currentUser
+                                        ? allUsers
+                                              .filter(
+                                                  (u) =>
+                                                      u.regId !==
+                                                      currentUser.regId
+                                              )
+                                              .map((u) => (
+                                                  <MenuItem
+                                                      value={u.regId}
+                                                      style={getSelectedStyle(
+                                                          u.regId
+                                                      )}
+                                                  >
+                                                      {u.displayName}
+                                                  </MenuItem>
+                                              ))
+                                        : []}
+                                </Select>
                             }
                         />
                     </Stack>

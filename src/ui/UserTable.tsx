@@ -4,17 +4,22 @@ import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { type User } from "../util/user";
 import useAllUsers from "../hooks/useAllUsers";
 import EditUserDialog from "./dialogs/EditUserDialog";
+import CreateUserDialog from "./dialogs/CreateUserDialog";
 
 export default function UserTable() {
-    const allUsers = useAllUsers();
+    const { allUsers, triggerRefresh } = useAllUsers();
 
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
 
-    const handleOpenDialog = (user: User) => {
+    const handleOpenEditDialog = (user: User) => {
         setUser(user);
-        setIsDialogOpen(true);
+        setIsEditDialogOpen(true);
     };
+
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+
+    const handleOpenCreateDialog = () => setIsCreateDialogOpen(true);
 
     const columns: Array<GridColDef> = [
         { field: "userName", headerName: "Username", flex: 2 },
@@ -30,13 +35,13 @@ export default function UserTable() {
         {
             field: "options",
             headerName: "Options",
-            flex: 1,
+            flex: 2,
             renderCell: (params) => (
                 <>
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => handleOpenDialog(params.row)}
+                        onClick={() => handleOpenEditDialog(params.row)}
                     >
                         Edit
                     </Button>
@@ -60,6 +65,13 @@ export default function UserTable() {
 
     return (
         <>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenCreateDialog}
+            >
+                Create User
+            </Button>
             <DataGrid
                 columns={columns}
                 rows={allUsers.map((u) => ({ ...u, id: u.regId }))}
@@ -67,8 +79,14 @@ export default function UserTable() {
             <EditUserDialog
                 user={user}
                 setUser={setUser}
-                isDialogOpen={isDialogOpen}
-                setIsDialogOpen={setIsDialogOpen}
+                isDialogOpen={isEditDialogOpen}
+                setIsDialogOpen={setIsEditDialogOpen}
+                refreshUsers={triggerRefresh}
+            />
+            <CreateUserDialog
+                isDialogOpen={isCreateDialogOpen}
+                setIsDialogOpen={setIsCreateDialogOpen}
+                refreshUsers={triggerRefresh}
             />
         </>
     );

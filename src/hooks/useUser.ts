@@ -6,8 +6,13 @@ import { getUser, type User } from "../util/user";
  * @param id
  * @returns
  */
-const useUser = (id: string): User | null => {
+const useUser = (
+    id: string
+): { user: User | null; triggerRefresh: () => void } => {
     const [user, setUser] = useState<User | null>(null);
+    const [refresh, setRefresh] = useState<boolean>(true);
+
+    const triggerRefresh = () => setRefresh(true);
 
     useEffect(() => {
         const asyncWrapper = async () => {
@@ -18,12 +23,13 @@ const useUser = (id: string): User | null => {
             } catch (e) {
                 console.log("Error in getting user: ", e);
             }
+            setRefresh(false);
         };
 
-        asyncWrapper();
-    }, [id]);
+        if (refresh) asyncWrapper();
+    }, [id, refresh]);
 
-    return user;
+    return { user, triggerRefresh };
 };
 
 export default useUser;
