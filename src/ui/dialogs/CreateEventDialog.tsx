@@ -41,11 +41,6 @@ export default function CreateEventDialog({
     const { currentUser } = useCurrentUser();
     const { allUsers } = useAllUsers();
 
-    const handleCloseDialog = useCallback(
-        () => setIsDialogOpen(false),
-        [setIsDialogOpen]
-    );
-
     /** ensures that items already selected have bold text */
     const getSelectedStyle = (regId: string): { fontWeight?: string } => {
         if (invitees.includes(regId)) return { fontWeight: "bold" };
@@ -60,6 +55,18 @@ export default function CreateEventDialog({
     const [invitees, setInvitees] = useState<Array<string>>([]); // array of user IDs
 
     const [isUpdating, setIsUpdating] = useState(false);
+
+    const handleCloseDialog = useCallback(() => {
+        setIsUpdating(false);
+        setTitle("");
+        setDescription("");
+        setLocation("");
+        setColor("000000");
+        setAllDay(allDayDefault);
+        setInvitees([]);
+
+        setIsDialogOpen(false);
+    }, [setIsDialogOpen]);
 
     // effect for creating a user (triggered after click of save button)
     useEffect(() => {
