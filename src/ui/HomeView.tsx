@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useCallback, useMemo } from "react";
 import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
 import { signOutUser } from "../util/user";
+import { type Event, getAllEvents } from "../util/event";
 import AdminHomeView from "./admin/AdminHomeView";
 import { Button, CircularProgress } from "@mui/material";
 import useCurrentUser from "../hooks/useCurrentUser";
@@ -10,7 +11,8 @@ import {
     Calendar,
     dayjsLocalizer,
     type View,
-    type Event
+    type Event as CalEvent,
+    type SlotInfo
 } from "react-big-calendar";
 import dayjs from "dayjs";
 
@@ -48,14 +50,16 @@ export default function HomeView() {
     );
 
     const onShowMore = useCallback(
-        (_events: Array<Event>, date: Date) => {
+        (_events: Array<CalEvent>, date: Date) => {
             setCurrDate(date);
             setCalView("day");
         },
         [setCurrDate, setCalView]
     );
 
-    const onSelectSlot = useCallback(() => {
+    const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
+    const onSelectSlot = useCallback((selection: SlotInfo) => {
+        setSelectedSlot(selection);
         handleOpenDialog();
     }, [handleOpenDialog]);
 
@@ -76,6 +80,23 @@ export default function HomeView() {
             asyncWrapper();
         }
     }, [isSigningOut, auth]);
+
+    // effect for loading events
+    const [events, setEvents] = useState<Array<Event | CalEvent>>([]);
+    useEffect(() => {
+        const asyncWrapper = async () => {
+            if (auth) {
+                try {
+                    const evs = await getAllEvents();
+                    setEvents(evs);
+                } catch (e) {
+                    console.log("Error in fetching events: ", e);
+                }
+            }
+        };
+
+        asyncWrapper();
+    }, [auth]);
 
     switch (view) {
         case "home":
@@ -100,7 +121,7 @@ export default function HomeView() {
                         )}
                         <Calendar
                             localizer={localizer}
-                            events={[]}
+                            events={events.map((ev) => ({ title: ev.title, start: ev.start, end: ev.end, allDay: ev.allDay }))}
                             selectable={true}
                             view={calView}
                             onView={onCalView}
@@ -114,6 +135,9 @@ export default function HomeView() {
                         <CreateEventDialog
                             isDialogOpen={isDialogOpen}
                             setIsDialogOpen={setIsDialogOpen}
+                            selectedSlot={selectedSlot}
+                            setSelectedSlot={setSelectedSlot}
+                            allDayDefault={calView === "month"}
                         />
                     </>
                 );
