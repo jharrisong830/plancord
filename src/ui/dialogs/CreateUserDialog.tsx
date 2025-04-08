@@ -41,7 +41,7 @@ export default function CreateUserDialog({
 
         setIsDialogOpen(false);
         refreshUsers();
-    }, [setIsDialogOpen]);
+    }, [setIsDialogOpen, refreshUsers]);
 
     // effect for creating a user (triggered after click of save button)
     useEffect(() => {

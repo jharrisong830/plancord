@@ -66,7 +66,7 @@ export default function CreateEventDialog({
         setInvitees([]);
 
         setIsDialogOpen(false);
-    }, [setIsDialogOpen]);
+    }, [setIsDialogOpen, allDayDefault]);
 
     // effect for creating a user (triggered after click of save button)
     useEffect(() => {
@@ -114,26 +114,30 @@ export default function CreateEventDialog({
             <DialogTitle>Create Event</DialogTitle>
             <DialogContent>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                { selectedSlot ? (
-                    <FormGroup>
-                        <Stack spacing={1}>
-                            <TextField
-                                label="Title"
-                                onChange={(e) => setTitle(e.target.value)}
-                            />
-                            <TextField
-                                label="Description"
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
-                            <TextField
-                                label="Location"
-                                onChange={(e) => setLocation(e.target.value)}
-                            />
-                            <TextField
-                                label="Color (hex)"
-                                onChange={(e) => setColor(e.target.value)}
-                            />
-                            {/* <TextField
+                    {selectedSlot ? (
+                        <FormGroup>
+                            <Stack spacing={1}>
+                                <TextField
+                                    label="Title"
+                                    onChange={(e) => setTitle(e.target.value)}
+                                />
+                                <TextField
+                                    label="Description"
+                                    onChange={(e) =>
+                                        setDescription(e.target.value)
+                                    }
+                                />
+                                <TextField
+                                    label="Location"
+                                    onChange={(e) =>
+                                        setLocation(e.target.value)
+                                    }
+                                />
+                                <TextField
+                                    label="Color (hex)"
+                                    onChange={(e) => setColor(e.target.value)}
+                                />
+                                {/* <TextField
                                 type="datetime-local"
                                 label="Start"
                                 onChange={(e) => setSelectedSlot({ ...selectedSlot, start: new Date(e.target.value) })}
@@ -143,55 +147,78 @@ export default function CreateEventDialog({
                                 label="End"
                                 onChange={(e) => setSelectedSlot({ ...selectedSlot, end: new Date(e.target.value) })}
                             /> */}
-                            <DateTimePicker label="Start" value={dayjs(selectedSlot.start)} onChange={(newVal) => newVal && setSelectedSlot({ ...selectedSlot, start: newVal.toDate()})}/>
-                            <DateTimePicker label="End" value={dayjs(selectedSlot.end)} onChange={(newVal) => newVal && setSelectedSlot({ ...selectedSlot, end: newVal.toDate()})}/>
-                            <FormControlLabel
-                                label="All Day?"
-                                control={
-                                    <Checkbox
-                                        defaultChecked={allDayDefault}
-                                        onChange={(e) =>
-                                            setAllDay(e.target.checked)
-                                        }
-                                    />
-                                }
-                            />
-                            <FormControlLabel
-                                label="Invitees"
-                                control={
-                                    <Select
-                                        multiple
-                                        value={invitees}
-                                        onChange={(e) =>
-                                            setInvitees(
-                                                e.target.value as Array<string>
-                                            )
-                                        }
-                                    >
-                                        {allUsers && currentUser
-                                            ? allUsers
-                                                .filter(
-                                                    (u) =>
-                                                        u.regId !==
-                                                        currentUser.regId
+                                <DateTimePicker
+                                    label="Start"
+                                    value={dayjs(selectedSlot.start)}
+                                    onChange={(newVal) =>
+                                        newVal &&
+                                        setSelectedSlot({
+                                            ...selectedSlot,
+                                            start: newVal.toDate()
+                                        })
+                                    }
+                                />
+                                <DateTimePicker
+                                    label="End"
+                                    value={dayjs(selectedSlot.end)}
+                                    onChange={(newVal) =>
+                                        newVal &&
+                                        setSelectedSlot({
+                                            ...selectedSlot,
+                                            end: newVal.toDate()
+                                        })
+                                    }
+                                />
+                                <FormControlLabel
+                                    label="All Day?"
+                                    control={
+                                        <Checkbox
+                                            defaultChecked={allDayDefault}
+                                            onChange={(e) =>
+                                                setAllDay(e.target.checked)
+                                            }
+                                        />
+                                    }
+                                />
+                                <FormControlLabel
+                                    label="Invitees"
+                                    control={
+                                        <Select
+                                            multiple
+                                            value={invitees}
+                                            onChange={(e) =>
+                                                setInvitees(
+                                                    e.target
+                                                        .value as Array<string>
                                                 )
-                                                .map((u) => (
-                                                    <MenuItem
-                                                        value={u.regId}
-                                                        style={getSelectedStyle(
-                                                            u.regId
-                                                        )}
-                                                    >
-                                                        {u.displayName}
-                                                    </MenuItem>
-                                                ))
-                                            : []}
-                                    </Select>
-                                }
-                            />
-                        </Stack>
-                    </FormGroup>
-                ) : <CircularProgress />}
+                                            }
+                                        >
+                                            {allUsers && currentUser
+                                                ? allUsers
+                                                      .filter(
+                                                          (u) =>
+                                                              u.regId !==
+                                                              currentUser.regId
+                                                      )
+                                                      .map((u) => (
+                                                          <MenuItem
+                                                              value={u.regId}
+                                                              style={getSelectedStyle(
+                                                                  u.regId
+                                                              )}
+                                                          >
+                                                              {u.displayName}
+                                                          </MenuItem>
+                                                      ))
+                                                : []}
+                                        </Select>
+                                    }
+                                />
+                            </Stack>
+                        </FormGroup>
+                    ) : (
+                        <CircularProgress />
+                    )}
                 </LocalizationProvider>
             </DialogContent>
             <DialogActions>

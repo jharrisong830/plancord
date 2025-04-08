@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback, useMemo } from "react";
 import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
 import { signOutUser } from "../util/user";
-import { type Event, getAllEvents } from "../util/event";
+import { type Event, getCurrentUserEvents } from "../util/event";
 import AdminHomeView from "./admin/AdminHomeView";
 import { Button, CircularProgress } from "@mui/material";
 import useCurrentUser from "../hooks/useCurrentUser";
@@ -58,10 +58,13 @@ export default function HomeView() {
     );
 
     const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
-    const onSelectSlot = useCallback((selection: SlotInfo) => {
-        setSelectedSlot(selection);
-        handleOpenDialog();
-    }, [handleOpenDialog]);
+    const onSelectSlot = useCallback(
+        (selection: SlotInfo) => {
+            setSelectedSlot(selection);
+            handleOpenDialog();
+        },
+        [handleOpenDialog]
+    );
 
     // effect for signout
     useEffect(() => {
@@ -85,9 +88,9 @@ export default function HomeView() {
     const [events, setEvents] = useState<Array<Event | CalEvent>>([]);
     useEffect(() => {
         const asyncWrapper = async () => {
-            if (auth) {
+            if (auth && currentUser) {
                 try {
-                    const evs = await getAllEvents();
+                    const evs = await getCurrentUserEvents(currentUser.regId);
                     setEvents(evs);
                 } catch (e) {
                     console.log("Error in fetching events: ", e);
@@ -96,7 +99,7 @@ export default function HomeView() {
         };
 
         asyncWrapper();
-    }, [auth]);
+    }, [auth, currentUser]);
 
     switch (view) {
         case "home":
@@ -121,7 +124,12 @@ export default function HomeView() {
                         )}
                         <Calendar
                             localizer={localizer}
-                            events={events.map((ev) => ({ title: ev.title, start: ev.start, end: ev.end, allDay: ev.allDay }))}
+                            events={events.map((ev) => ({
+                                title: ev.title,
+                                start: ev.start,
+                                end: ev.end,
+                                allDay: ev.allDay
+                            }))}
                             selectable={true}
                             view={calView}
                             onView={onCalView}

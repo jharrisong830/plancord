@@ -1,5 +1,15 @@
 import firestore from "../firebase/firestore";
-import { setDoc, getDoc, doc, getDocs, collection, type Timestamp } from "firebase/firestore";
+import {
+    setDoc,
+    getDoc,
+    doc,
+    getDocs,
+    collection,
+    type Timestamp,
+    query,
+    where,
+    or
+} from "firebase/firestore";
 import { v4 as uuid } from "uuid";
 
 export type Event = {
@@ -18,7 +28,7 @@ export type Event = {
 type FirestoreEvent = Event & {
     start: Timestamp;
     end: Timestamp;
-}
+};
 
 export const createEvent = async (
     title: string,
@@ -74,10 +84,47 @@ export const getAllEvents = async (): Promise<Array<Event>> => {
     const db = firestore();
     try {
         const querySnapshot = await getDocs(collection(db, "events"));
-        const events = querySnapshot.docs.map((d) => d.data() as FirestoreEvent);
-        return events.map((e) => ({ ...e, start: e.start.toDate(), end: e.end.toDate() })) as Array<Event>;
+        const events = querySnapshot.docs.map(
+            (d) => d.data() as FirestoreEvent
+        );
+        return events.map((e) => ({
+            ...e,
+            start: e.start.toDate(),
+            end: e.end.toDate()
+        })) as Array<Event>;
     } catch (e) {
         console.log("Error in getting all events: ", e);
+        throw e;
+    }
+};
+
+/**
+ * gets events only where the user is the organizer or on the invitee list
+ * @param userId
+ */
+export const getCurrentUserEvents = async (
+    userId: string
+): Promise<Array<Event>> => {
+    const db = firestore();
+    try {
+        const q = query(
+            collection(db, "events"),
+            or(
+                where("organizer", "==", userId),
+                where("invitees", "array-contains", userId)
+            )
+        );
+        const querySnapshot = await getDocs(q);
+        const events = querySnapshot.docs.map(
+            (d) => d.data() as FirestoreEvent
+        );
+        return events.map((e) => ({
+            ...e,
+            start: e.start.toDate(),
+            end: e.end.toDate()
+        })) as Array<Event>;
+    } catch (e) {
+        console.log("Error in getting current user events: ", e);
         throw e;
     }
 };

@@ -36,7 +36,7 @@ export default function EditUserDialog({
         setIsDialogOpen(false);
         setUser(null);
         refreshUsers();
-    }, [setIsDialogOpen, setUser]);
+    }, [setIsDialogOpen, setUser, refreshUsers]);
 
     // effect for updating a user (triggered after click of save button)
     useEffect(() => {
