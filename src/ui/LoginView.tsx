@@ -9,8 +9,7 @@ import { signInUser } from "../util/user";
 export default function LoginView() {
     const navigate = useNavigate();
 
-    const { authState } = useContext(FirebaseAuthContext)!;
-    const { auth } = authState;
+    const { setToken } = useContext(FirebaseAuthContext)!;
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -19,20 +18,19 @@ export default function LoginView() {
 
     useEffect(() => {
         const asyncWrapper = async () => {
-            if (auth) {
                 try {
-                    await signInUser(auth, email, password);
+                    const idToken = await signInUser(email, password);
+                    setToken(idToken);
                     console.log("USER SIGNED IN");
                 } catch (e) {
                     console.log("Error in signing in user: ", e);
                 }
-            }
         };
 
         if (isLoggingIn) {
             asyncWrapper();
         }
-    }, [isLoggingIn, auth, email, password]);
+    }, [isLoggingIn, setToken, email, password]);
 
     return (
         <Container>

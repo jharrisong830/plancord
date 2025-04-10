@@ -1,11 +1,10 @@
 import { useState, useEffect, useContext, useCallback, useMemo } from "react";
 import FirebaseAuthContext from "../contexts/FirebaseAuthContext";
-import { signOutUser } from "../util/user";
-import { type Event, getCurrentUserEvents } from "../util/event";
-import AdminHomeView from "./admin/AdminHomeView";
+// import { type Event, getCurrentUserEvents } from "../util/event";
+// import AdminHomeView from "./admin/AdminHomeView";
 import { Button, CircularProgress } from "@mui/material";
-import useCurrentUser from "../hooks/useCurrentUser";
-import CreateEventDialog from "./dialogs/CreateEventDialog";
+// import useCurrentUser from "../hooks/useCurrentUser";
+// import CreateEventDialog from "./dialogs/CreateEventDialog";
 
 import {
     Calendar,
@@ -20,13 +19,15 @@ export default function HomeView() {
     const localizer = dayjsLocalizer(dayjs);
     const today = useMemo(() => new Date(), []);
 
-    const { authState } = useContext(FirebaseAuthContext)!;
-    const { auth } = authState;
+    const { token, setToken } = useContext(FirebaseAuthContext)!;
 
-    const [isSigningOut, setIsSigningOut] = useState(false);
+    const signOutUser = useCallback(() => {
+        setToken(null);
+    }, [setToken]);
+
     const [view, setView] = useState<"home" | "admin" | "week">("home");
 
-    const { currentUser } = useCurrentUser();
+    // const { currentUser } = useCurrentUser();
 
     // create event dialog
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -66,32 +67,14 @@ export default function HomeView() {
         [handleOpenDialog]
     );
 
-    // effect for signout
-    useEffect(() => {
-        const asyncWrapper = async () => {
-            if (auth) {
-                try {
-                    await signOutUser(auth);
-                    console.log("USER SIGNED OUT");
-                } catch (e) {
-                    console.log("Error in signing out user: ", e);
-                }
-            }
-        };
-
-        if (isSigningOut) {
-            asyncWrapper();
-        }
-    }, [isSigningOut, auth]);
-
     // effect for loading events
     const [events, setEvents] = useState<Array<Event | CalEvent>>([]);
     useEffect(() => {
         const asyncWrapper = async () => {
-            if (auth && currentUser) {
+            if (false) {
                 try {
-                    const evs = await getCurrentUserEvents(currentUser.regId);
-                    setEvents(evs);
+                    // const evs = await getCurrentUserEvents(currentUser.regId);
+                    // setEvents(evs);
                 } catch (e) {
                     console.log("Error in fetching events: ", e);
                 }
@@ -99,37 +82,20 @@ export default function HomeView() {
         };
 
         asyncWrapper();
-    }, [auth, currentUser]);
+    }, []);
 
     switch (view) {
         case "home":
-            if (currentUser) {
+            if (token) {
                 return (
                     <>
                         <h1>Home</h1>
-                        <Button onClick={() => setIsSigningOut(true)}>
+                        <Button onClick={() => signOutUser()}>
                             Sign Out
                         </Button>
-                        <h4>
-                            {currentUser.displayName} (@
-                            {currentUser.userName})
-                        </h4>
-                        {currentUser.admin && (
-                            <>
-                                <h5>Admin</h5>
-                                <Button onClick={() => setView("admin")}>
-                                    Admin Panel
-                                </Button>
-                            </>
-                        )}
                         <Calendar
                             localizer={localizer}
-                            events={events.map((ev) => ({
-                                title: ev.title,
-                                start: ev.start,
-                                end: ev.end,
-                                allDay: ev.allDay
-                            }))}
+                            events={[]}
                             selectable={true}
                             view={calView}
                             onView={onCalView}
@@ -140,18 +106,20 @@ export default function HomeView() {
                             onSelectSlot={onSelectSlot}
                             style={{ height: 500 }}
                         />
-                        <CreateEventDialog
+                        {/* <CreateEventDialog
                             isDialogOpen={isDialogOpen}
                             setIsDialogOpen={setIsDialogOpen}
                             selectedSlot={selectedSlot}
                             setSelectedSlot={setSelectedSlot}
                             allDayDefault={calView === "month"}
-                        />
+                        /> */}
                     </>
                 );
             }
             return <CircularProgress />;
-        case "admin":
-            return <AdminHomeView goBack={() => setView("home")} />;
+        // case "admin":
+        //     return <AdminHomeView goBack={() => setView("home")} />;
+        default:
+            return <CircularProgress />;
     }
 }

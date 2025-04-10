@@ -8,10 +8,9 @@ export default function AuthRoute({
 }: {
     children: React.JSX.Element;
 }) {
-    const { authState } = useContext(FirebaseAuthContext)!;
-    const { isAuth } = authState;
+    const { token } = useContext(FirebaseAuthContext)!;
 
-    if (isAuth) {
+    if (token) {
         return children;
     }
     return <LoginView />;
